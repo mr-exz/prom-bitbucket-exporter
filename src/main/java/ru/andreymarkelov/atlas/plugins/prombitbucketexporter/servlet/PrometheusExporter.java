@@ -1,13 +1,11 @@
 package ru.andreymarkelov.atlas.plugins.prombitbucketexporter.servlet;
 
-import io.prometheus.client.CollectorRegistry;
 import io.prometheus.client.exporter.common.TextFormat;
 import io.prometheus.client.hotspot.DefaultExports;
 import org.apache.commons.lang3.StringUtils;
 import ru.andreymarkelov.atlas.plugins.prombitbucketexporter.manager.MetricCollector;
 import ru.andreymarkelov.atlas.plugins.prombitbucketexporter.manager.SecureTokenManager;
 
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -19,22 +17,21 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class PrometheusExporter extends HttpServlet {
-    private final CollectorRegistry registry;
+    private final MetricCollector metricCollector;
     private final SecureTokenManager secureTokenManager;
 
     public PrometheusExporter(
             MetricCollector metricCollector,
             SecureTokenManager secureTokenManager) {
+        this.metricCollector = metricCollector;
         this.secureTokenManager = secureTokenManager;
-        this.registry = CollectorRegistry.defaultRegistry;
-        this.registry.register(metricCollector.getCollector());
         DefaultExports.initialize();
     }
 
     @Override
     protected void doGet(
             final HttpServletRequest httpServletRequest,
-            final HttpServletResponse httpServletResponse) throws ServletException, IOException {
+            final HttpServletResponse httpServletResponse) throws IOException {
         String paramToken = httpServletRequest.getParameter("token");
         String storedToken = secureTokenManager.getToken();
 
@@ -47,13 +44,13 @@ public class PrometheusExporter extends HttpServlet {
         httpServletResponse.setContentType(TextFormat.CONTENT_TYPE_004);
 
         try (Writer writer = httpServletResponse.getWriter()) {
-            TextFormat.write004(writer, registry.filteredMetricFamilySamples(parse(httpServletRequest)));
+            TextFormat.write004(writer, metricCollector.getRegistry().filteredMetricFamilySamples(parse(httpServletRequest)));
             writer.flush();
         }
     }
 
     @Override
-    protected void doPost(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) throws ServletException, IOException {
+    protected void doPost(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) throws IOException {
         doGet(httpServletRequest, httpServletResponse);
     }
 

@@ -7,6 +7,7 @@
         <param name="plugin-logo">/ru/andreymarkelov/atlas/plugins/prombitbucketexporter/images/prom-exporter.png</param>
         <param name="vendor-icon">/ru/andreymarkelov/atlas/plugins/prombitbucketexporter/images/32.jpg</param>
         <param name="vendor-logo">/ru/andreymarkelov/atlas/plugins/prombitbucketexporter/images/144.jpg</param>
+        <param name="plugin-banner">/ru/andreymarkelov/atlas/plugins/prombitbucketexporter/images/banner.png</param>
         <param name="configure.url">/plugins/servlet/promforbitbucket/token/</param>
         <param name="atlassian-data-center-compatible">true</param>
     </plugin-info>
@@ -70,8 +71,21 @@
     <component name="Security Token Data Manager" key="prom-for-bitbucket-exporter-data-manager" class="ru.andreymarkelov.atlas.plugins.prombitbucketexporter.manager.SecureTokenManagerImpl">
         <interface>ru.andreymarkelov.atlas.plugins.prombitbucketexporter.manager.SecureTokenManager</interface>
     </component>
+    <component name="Scraping Data Manager" key="prom-for-bitbucket-exporter-scraping-manager" class="ru.andreymarkelov.atlas.plugins.prombitbucketexporter.manager.ScrapingSettingsManagerImpl">
+        <interface>ru.andreymarkelov.atlas.plugins.prombitbucketexporter.manager.ScrapingSettingsManager</interface>
+    </component>
+    <component name="Scheduled Metrics Evaluator" key="prom-for-bitbucket-exporter-evaluator" class="ru.andreymarkelov.atlas.plugins.prombitbucketexporter.manager.ScheduledMetricEvaluatorImpl">
+        <interface>ru.andreymarkelov.atlas.plugins.prombitbucketexporter.manager.ScheduledMetricEvaluator</interface>
+    </component>
+    <component name="Projects Monitor" key="prom-for-bitbucket-exporter-projects-monitor" class="ru.andreymarkelov.atlas.plugins.prombitbucketexporter.monitor.ProjectsMonitor"/>
+    <component name="Repositories Monitor" key="prom-for-bitbucket-exporter-repositories-monitor" class="ru.andreymarkelov.atlas.plugins.prombitbucketexporter.monitor.RepositoriesMonitor"/>
+
+    <!-- Component Imports -->
     <component-import key="pluginSettingsFactory" interface="com.atlassian.sal.api.pluginsettings.PluginSettingsFactory"/>
     <component-import key="applicationProperties" interface="com.atlassian.sal.api.ApplicationProperties"/>
     <component-import key="soyTemplateRenderer" interface="com.atlassian.soy.renderer.SoyTemplateRenderer"/>
     <component-import key="loginUriProvider" interface="com.atlassian.sal.api.auth.LoginUriProvider"/>
+    <component-import key="licenseService" interface="com.atlassian.bitbucket.license.LicenseService"/>
+    <component-import key="pluginScheduler" interface="com.atlassian.sal.api.scheduling.PluginScheduler"/>
+    <component-import key="permissionService" interface="com.atlassian.bitbucket.permission.PermissionService"/>
 </atlassian-plugin>
